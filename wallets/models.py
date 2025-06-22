@@ -1,6 +1,8 @@
 from django.db import models
 from django.conf import settings
 from django.utils import timezone
+from django.db.models.signals import post_save
+from django.dispatch import receiver
 
 class Wallet(models.Model):
     INSTANT = 'instant'
@@ -13,7 +15,9 @@ class Wallet(models.Model):
     name = models.CharField(max_length=255)
     wallet_type = models.CharField(max_length=10, choices=WALLET_TYPES)
     creator = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    merchant_account_name = models.CharField(max_length=20, blank=True, null=True)
     merchant_account_number = models.CharField(max_length=20)
+    Description = models.CharField(max_length=200, blank=True, null=True)
     disbursed = models.BooleanField(default=False)
     disbursement_date = models.DateTimeField(blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
@@ -43,3 +47,13 @@ class WalletInvitation(models.Model):
 
     def __str__(self):
         return f'Invitation to {self.invited_user.email} for {self.wallet.name}'
+
+@receiver(post_save, sender=WalletInvitation)
+def prompt_kyc_after_acceptance(sender, instance, created, **kwargs):
+    if not created and instance.accepted:
+        user = instance.invited_user
+        # Check if user lacks KYC
+        if not (user.bvn and user.nin and user.card_token):
+            # Flag the system or redirect logic will be done in views.
+            print(f"KYC required for user {user.email}. Redirect to KYC page.")
+            # You can set a flag on the user or send notification/email here

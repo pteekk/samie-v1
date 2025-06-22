@@ -3,9 +3,13 @@ from rest_framework.response import Response
 from rest_framework.decorators import action
 from django.utils import timezone
 from .models import Wallet, WalletMember, WalletInvitation
-from .serializers import WalletSerializer, WalletMemberSerializer, WalletInvitationSerializer
+from .serializers import WalletSerializer, WalletMemberSerializer, WalletInvitationSerializer, KYCVerificationSerializer
 from transactions.paystack import transfer_to_bank
 from notifications.firebase_utils import send_push_notification
+
+from rest_framework.views import APIView
+from rest_framework.permissions import IsAuthenticated
+
 
 class WalletViewSet(viewsets.ModelViewSet):
     queryset = Wallet.objects.all()
@@ -52,6 +56,10 @@ class WalletInvitationViewSet(viewsets.ModelViewSet):
         invitation.accepted = True
         invitation.save()
 
+        # Added for checking and redirecting for KYC 22/6/25
+        if not (user.bvn and user.nin and user.card_token):
+            return redirect('kyc_verification_page')  # Define this route in your urls
+
         WalletMember.objects.create(
             wallet=invitation.wallet,
             user=invitation.invited_user,
@@ -63,3 +71,24 @@ class WalletInvitationViewSet(viewsets.ModelViewSet):
         send_push_notification(invitation.invited_by.firebase_token, f'{invitation.invited_user.email} accepted your wallet invitation.')
 
         return Response({'message': 'Invitation accepted and wallet membership created.'})
+
+
+# View for handling KYC check and validation
+class KYCVerificationView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        """Optional: Prefill existing data"""
+        user = request.user
+        data = {
+            "bvn": user.bvn or "",
+            "nin": user.nin or "",
+        }
+        return Response(data)
+
+    def post(self, request):
+        serializer = KYCVerificationSerializer(data=request.data, context={'request': request})
+        if serializer.is_valid():
+            serializer.save()
+            return Response({"message": "KYC completed successfully."}, status=status.HTTP_200_OK)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

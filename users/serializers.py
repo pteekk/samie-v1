@@ -8,7 +8,7 @@ class UserRegistrationSerializer(serializers.ModelSerializer):
     
     class Meta:
         model = User
-        fields = ('username', 'email', 'password', 'nin', 'bvn', 'card_token')
+        fields = ('username', 'email', 'password', 'nin', 'bvn')
 
     def create(self, validated_data):
         user = User.objects.create(
@@ -16,7 +16,7 @@ class UserRegistrationSerializer(serializers.ModelSerializer):
             email=validated_data['email'],
             nin=validated_data['nin'],
             bvn=validated_data['bvn'],
-            card_token=validated_data['card_token']
+            # card_token=validated_data['card_token']
         )
         user.set_password(validated_data['password'])
         user.save()
