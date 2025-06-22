@@ -133,7 +133,7 @@ USE_TZ = True
 
 
 # Firebase Configuration
-FIREBASE_CERT_PATH = 'sammie_key.json'
+FIREBASE_CERT_PATH = 'sammie_key'
 
 
 
