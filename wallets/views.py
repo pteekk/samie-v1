@@ -96,7 +96,7 @@ class KYCVerificationViewSet(viewsets.ViewSet):
     permission_classes = [IsAuthenticated]
 
     @action(detail=False, methods=['get'])
-    def retrieve(self, request):
+    def verify(self, request, pk=None):
         """Optional: Prefill existing data"""
         user = request.user
         data = {
