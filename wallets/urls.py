@@ -17,6 +17,3 @@ urlpatterns = [
 ]
 
 
-
-# Add Invitation Route
-router.register('wallet-invitations', WalletInvitationViewSet)
