@@ -12,7 +12,7 @@ router.register('wallet-invitation', WalletInvitationViewSet)
 
 urlpatterns = [
     path('', include(router.urls)),
-    path('kyc/verify/', KYCVerificationViewSet.as_view(), name='kyc_verification_page'),
+    path('kyc/verify/', KYCVerificationView.as_view(), name='kyc_verification_page'),
 ]
 
 
