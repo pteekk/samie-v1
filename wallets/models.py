@@ -15,13 +15,13 @@ class Wallet(models.Model):
     name = models.CharField(max_length=255)
     wallet_type = models.CharField(max_length=10, choices=WALLET_TYPES)
     creator = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
-    merchant_account_name = models.CharField(max_length=20, blank=True, null=True)
+    merchant_account_name = models.CharField(max_length=20)
     merchant_account_number = models.CharField(max_length=20)
-    Description = models.CharField(max_length=200, blank=True, null=True)
+    Description = models.CharField(max_length=500)
     disbursed = models.BooleanField(default=False)
-    disbursement_date = models.DateTimeField(blank=True, null=True)
+    disbursement_date = models.DateTimeField()
     created_at = models.DateTimeField(auto_now_add=True)
-    lock_time = models.DateTimeField(blank=True, null=True)  # FUTURE wallet opt-out window
+    lock_time = models.DateTimeField()  # FUTURE wallet opt-out window
 
     def __str__(self):
         return self.name
