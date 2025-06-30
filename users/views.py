@@ -5,6 +5,8 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.authtoken.models import Token
 from .models import UserProfile
 from .serializers import SignupSerializer, LoginSerializer, UserProfileSerializer
+from rest_framework_simplejwt.views import TokenObtainPairView
+from .serializers import CustomTokenObtainPairSerializer
 
 from rest_framework_simplejwt.views import (
     TokenObtainPairView,
@@ -61,3 +63,7 @@ class LogoutView(APIView):
             return Response({"detail": "Token not found or already deleted."}, status=status.HTTP_400_BAD_REQUEST)
 
         return Response({"detail": "Successfully logged out."}, status=status.HTTP_200_OK)
+
+
+class CustomLoginView(TokenObtainPairView):
+    serializer_class = CustomTokenObtainPairSerializer

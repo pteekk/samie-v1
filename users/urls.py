@@ -1,6 +1,5 @@
 from django.urls import path
-from .views import SignupView, LoginView, ProfileUpdateView
-
+from .views import SignupView, LoginView, ProfileUpdateView, CustomLoginView
 
 from django.urls import path
 from rest_framework_simplejwt.views import (
@@ -21,7 +20,8 @@ urlpatterns = [
 urlpatterns += [
     path('jwt/login/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
     path('jwt/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
-    path('jwt/verify/', TokenVerifyView.as_view(), name='token_verify'),
+    path('jwt/verify/', TokenVerifyView.as_view(), name='token_verify')
+    path('jwt/login/', CustomLoginView.as_view(), name='jwt_custom_login')
 ]
 
 
