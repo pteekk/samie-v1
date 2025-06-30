@@ -1,18 +1,30 @@
 from django.urls import path
-from .views import UserViewSet, UserDetailView, LoginView, LogoutView
+from .views import SignupView, LoginView, ProfileUpdateView
+
+
+from django.urls import path
+from rest_framework_simplejwt.views import (
+    TokenObtainPairView,  # Login
+    TokenRefreshView,     # Refresh
+    TokenVerifyView       # Optional
+)
+
 
 urlpatterns = [
-    # GET /api/users/ - List all users
-    # POST /api/users/ - Create new user
-    path('', UserViewSet.as_view(), name='user-list-create'),
+    path('signup/', SignupView.as_view(), name='signup'),
     path('login/', LoginView.as_view(), name='login'),
-    path('logout/', LogoutView.as_view(), name='logout'),
-    
-    # GET /api/users/1/ - Retrieve user with id=1
-    # PUT /api/users/1/ - Update user with id=1
-    # PATCH /api/users/1/ - Partial update user with id=1
-    # DELETE /api/users/1/ - Delete user with id=1
-    path('<int:pk>/', UserDetailView.as_view(), name='user-detail'),
+    path('profile/', ProfileUpdateView.as_view(), name='profile_update'),
+    path('logout/', LogoutView.as_view(), name='logout')
 ]
+
+
+urlpatterns += [
+    path('jwt/login/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
+    path('jwt/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
+    path('jwt/verify/', TokenVerifyView.as_view(), name='token_verify'),
+]
+
+
+
 
 
